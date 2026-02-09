@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate, Link } from "react-router-dom"; // import Link
 import signinImg from '../assets/img/illustrations/signin.svg';
 
 export default function Login() {
@@ -6,24 +7,18 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log({
-      email,
-      password,
-      remember
-    });
-
-    // later:
-    // dispatch(loginUser({ email, password }))
+    console.log({ email, password, remember });
+    navigate("/dashboard"); // simulate login success
   };
 
   return (
     <main>
       <section className="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
         <div className="container">
-
           <div
             className="row justify-content-center form-bg-image"
             style={{ backgroundImage: `url(${signinImg})` }}
@@ -40,11 +35,7 @@ export default function Login() {
                     <label htmlFor="email">Your Email</label>
                     <div className="input-group">
                       <span className="input-group-text">
-                        <svg
-                          className="icon icon-xs text-gray-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
+                        <svg className="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                           <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                         </svg>
@@ -67,16 +58,8 @@ export default function Login() {
                     <label htmlFor="password">Your Password</label>
                     <div className="input-group">
                       <span className="input-group-text">
-                        <svg
-                          className="icon icon-xs text-gray-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                            clipRule="evenodd"
-                          />
+                        <svg className="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                         </svg>
                       </span>
                       <input
@@ -121,9 +104,9 @@ export default function Login() {
                 <div className="d-flex justify-content-center align-items-center mt-4">
                   <span className="fw-normal">
                     Not registered?{' '}
-                    <a href="/register" className="fw-bold" >
+                    <Link to="/register" className="fw-bold"> {/* <-- Use Link */}
                       Create account
-                    </a>
+                    </Link>
                   </span>
                 </div>
               </div>
