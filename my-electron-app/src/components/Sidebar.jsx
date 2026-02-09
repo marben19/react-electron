@@ -14,7 +14,7 @@ const Sidebar = () => {
         <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
       </svg>
     ) },
-    { path: '/login', label: 'Tasks', icon: (
+    { path: '/tasks', label: 'Tasks', icon: (
       <svg className="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20">
         <path d="M4 4h12v2H4V4zm0 5h12v2H4V9zm0 5h12v2H4v-2z"/>
       </svg>
