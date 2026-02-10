@@ -1,24 +1,55 @@
 import { useState } from "react";
-import signinImg from '../assets/img/illustrations/signin.svg';
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import signinImg from "../assets/img/illustrations/signin.svg";
+import { registerUser } from "../redux/thunk/userThunk.js";
 
 export default function Register() {
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState(""); // NEW
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
 
-  const handleSubmit = (e) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log({
-      email,
-      password,
-      confirmPassword,
-      agreeTerms
-    });
+    if (!name || !email || !password) {
+      Swal.fire("Oops!", "All fields are required.", "warning");
+      return;
+    }
 
-    // Later: call API / Redux action
+    if (!agreeTerms) {
+      Swal.fire("Oops!", "You must agree to the terms and conditions.", "warning");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Swal.fire("Oops!", "Passwords do not match.", "error");
+      return;
+    }
+
+    try {
+      const resultAction = await dispatch(registerUser({ name, email, password })).unwrap();
+
+      Swal.fire({
+        icon: "success",
+        title: "Registered!",
+        text: `Welcome!`, // SHOW NAME
+      }).then(() => {
+        navigate("/dashboard");
+      });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Registration Failed",
+        text: err || "Something went wrong.",
+      });
+    }
   };
 
   return (
@@ -36,69 +67,61 @@ export default function Register() {
                 </div>
 
                 <form className="mt-4" onSubmit={handleSubmit}>
+                  {/* Name */}
+                  <div className="form-group mb-4">
+                    <label htmlFor="name">Your Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="name"
+                      placeholder="John Doe"
+                      autoFocus
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+
                   {/* Email */}
                   <div className="form-group mb-4">
                     <label htmlFor="email">Your Email</label>
-                    <div className="input-group">
-                      <span className="input-group-text">
-                        <svg className="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                          <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                        </svg>
-                      </span>
-                      <input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        placeholder="example@company.com"
-                        autoFocus
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      placeholder="example@company.com"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
                   </div>
 
                   {/* Password */}
                   <div className="form-group mb-4">
-                    <label htmlFor="password">Your Password</label>
-                    <div className="input-group">
-                      <span className="input-group-text">
-                        <svg className="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <input
-                        type="password"
-                        className="form-control"
-                        id="password"
-                        placeholder="Password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </div>
+                    <label htmlFor="password">Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      id="password"
+                      placeholder="Password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
                   </div>
 
                   {/* Confirm Password */}
                   <div className="form-group mb-4">
                     <label htmlFor="confirm_password">Confirm Password</label>
-                    <div className="input-group">
-                      <span className="input-group-text">
-                        <svg className="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      <input
-                        type="password"
-                        className="form-control"
-                        id="confirm_password"
-                        placeholder="Confirm Password"
-                        required
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                      />
-                    </div>
+                    <input
+                      type="password"
+                      className="form-control"
+                      id="confirm_password"
+                      placeholder="Confirm Password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
                   </div>
 
                   {/* Terms */}
@@ -111,22 +134,16 @@ export default function Register() {
                       onChange={(e) => setAgreeTerms(e.target.checked)}
                     />
                     <label className="form-check-label fw-normal mb-0" htmlFor="agreeTerms">
-                      I agree to the <a href="#" className="fw-bold" onClick={(e) => e.preventDefault()}>terms and conditions</a>
+                      I agree to the <a href="#" onClick={(e) => e.preventDefault()}>terms and conditions</a>
                     </label>
                   </div>
 
                   <div className="d-grid">
-                    <button type="submit" className="btn btn-gray-800">Sign up</button>
+                    <button type="submit" className="btn btn-gray-800">
+                      Sign up
+                    </button>
                   </div>
                 </form>
-
-                <div className="d-flex justify-content-center align-items-center mt-4">
-                  <span className="fw-normal">
-                    Already have an account?{' '}
-                    <a href="/" className="fw-bold" >Login here</a>
-                  </span>
-                </div>
-
               </div>
             </div>
           </div>
@@ -134,6 +151,4 @@ export default function Register() {
       </section>
     </main>
   );
-
-
 }

@@ -1,27 +1,34 @@
-// electron/main/index.js
-import { app, BrowserWindow } from 'electron'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import { app, BrowserWindow } from "electron";
+import path from "path";
+import { fileURLToPath } from "url";
+import { startBackend } from "./start-backend.js";
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
-      preload: path.join(__dirname, '../preload/index.cjs'),
-      contextIsolation: true
-    }
-  })
+      preload: path.join(__dirname, "../preload/index.cjs"),
+      contextIsolation: true,
+    },
+  });
 
   if (!app.isPackaged) {
-    win.loadURL('http://localhost:5173')
-    win.webContents.openDevTools()
+    win.loadURL("http://localhost:5173");
+    win.webContents.openDevTools();
   } else {
-    win.loadFile(path.join(__dirname, '../../dist/index.html'))
+    win.loadFile(path.join(__dirname, "../../dist/index.html"));
   }
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  startBackend(); // ✅ starts backend automatically
+  createWindow();
+});
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
+});
